@@ -1,6 +1,7 @@
 template <typename T>
 ArrayList<T>::ArrayList(int i) {
-    // TODO
+    buffer = new T[i];
+    maxSize = i;
 }
 
 template <typename T>
@@ -25,21 +26,53 @@ ArrayList<T>::~ArrayList() {
 template <typename T>
 void ArrayList<T>::append(const T& elem) {
     // TODO
+    if (isFull()){
+        throw string("error, list is full");
+    }
+
+    if(buffer == nullptr){
+        buffer = new T[maxSize];
+    }
+
+    buffer[this->length] = elem;
+    this->length++;
 }
 
 template <typename T>
 void ArrayList<T>::clear() {
     // TODO
+    delete[] buffer;
+    buffer = nullptr;
+    this->length = 0;
 }
 
 template <typename T>
 void ArrayList<T>::copy(const ArrayList<T>& copyObj) {
     // TODO
+    // this is here to copy all the values of the given object, i think
+
+    this->length = copyObj.length;
+    maxSize = copyObj.maxSize;
+    buffer = new T[maxSize];
+
+    //copy all the buffer object things
+
+    for(int i = 0; i < this->length; i ++){
+       buffer[i] = copyObj.buffer[i]; 
+    }
 }
 
 template <typename T>
 T ArrayList<T>::getElement(int position) const {
     // TODO
+    // add error handling
+    // get the element from buffer at position "position"
+
+    if(position < 0 || position >= this->length){
+        throw string("getElement: error, position out of bounds");
+    }
+
+    return buffer[position];
 }
 
 template <typename T>
@@ -55,6 +88,28 @@ int ArrayList<T>::getMaxSize() const {
 template <typename T>
 void ArrayList<T>::insert(int position, const T& elem) {
     // TODO
+    // inserting elem into buffer at position
+    // also add error handling
+
+    if(position < 0 || position >= this->length){
+        throw string("insert: error, position out of bounds");
+    }
+
+    if(isFull()) {
+        throw string("insert: error, buffer is full");
+    }
+
+    // since we are inserting an element and not changing, we need to change the locations of all elements after position
+
+    for(int i = this->length; i > position; i--){
+        buffer[i] = buffer[i-1]; // using i-1 because it is becoming the value of the previous location
+    }
+
+    //actual insertion of the element
+    buffer[position] = elem;         
+
+    // since we are inserting an element we need to make the length longer
+    this->length++;
 }
 
 template <typename T>
@@ -70,11 +125,33 @@ bool ArrayList<T>::isFull() const {
 template <typename T>
 void ArrayList<T>::remove(int position) {
     // TODO
+    // add error handling
+
+    if(position < 0 || position >= this->length){
+        throw string("remove: error, position out of bounds");
+    }
+    
+    // no need to remove the element because the shift overwrites it
+
+    // add array position shift
+    for(int i = position + 1; i < this->length; i++){
+        buffer[i] = buffer[i+1]; // this is getting the value of the elem after it (shifting everything to the left)
+    }
+
+    //change the length of the buffer array
+    this->length--;
 }
 
 template <typename T>
 void ArrayList<T>::replace(int position, const T& elem) {
     // TODO
+    // add error handling
+    if(position < 0 || position >= this->length){
+        throw string("replace: error, position out of bounds");
+    }
+
+    // replace the element
+    buffer[position] = elem;
 }
 
 template <typename T>
